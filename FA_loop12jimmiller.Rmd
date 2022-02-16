@@ -1,0 +1,60 @@
+---
+title: "Loop 12 and Jim Miller Focus Area"
+output:
+  distill::distill_article:
+    toc: false
+    theme: theme.css
+---
+
+```{r Set-Up Block, include = FALSE}
+##### Load Libraries #####
+library(tidyverse)
+library(sf)
+library(leaflet)
+library(mapboxapi)
+library(htmltools)
+library(arcgisbinding)
+library(CPALtools)
+
+#### Load CRED Locations #####
+CRED_locations <- st_read(here::here("data/CRED_FocusAreas.geojson")) %>%
+  select(-Shape_Leng, -Shape_Area) %>%
+  st_zm() %>%
+  st_transform(crs = 4269)
+
+CRED_FA_LJM <- CRED_locations %>%
+  filter(NAME == "Loop12_JimMiller")
+
+CRED_FA_WCL <- CRED_locations %>%
+  filter(NAME == "WebbChapel_Lombardy")
+
+CRED_FA_CWG <- CRED_locations %>%
+  filter(NAME == "CampWisdom_Gannon")
+
+CRED_FA_OI <- CRED_locations %>%
+  filter(NAME == "Overton_Illinois")
+
+CRED_names <- data.frame(Order = c("1", "2", "3", "4"), FocusArea = c("Loop 12 and Jim Miller", 
+                                                                      "Webb Chapel and Lombardy", 
+                                                                      "Camp Wisdom and Gannon", 
+                                                                      "Overton and Illinois"))
+```
+
+```{r, Loop 12 and Jim Miller, echo = FALSE, message=FALSE, warning=FALSE, layout = "l-screen-inset shaded", fig.height=8}
+##### Leaflet Map #####
+leaflet() %>%
+#  setView(lng = -96.7970, lat = 32.7767, zoom = 10) %>%
+  addTiles(urlTemplate = cpal_mapbox, attribution = cpal_leaflet) %>%
+  addPolygons(data = CRED_FA_LJM,
+              color = "#525252",
+              weight = 1,
+              smoothFactor = 0.2, 
+              fillOpacity = 0.6,
+              fillColor = "#008097",
+              group = "Focus Area"
+              ) %>%
+  addLayersControl(
+    overlayGroups = c("Focus Area"),
+    position = "topright",
+    options = layersControlOptions(collapsed = FALSE))
+```
