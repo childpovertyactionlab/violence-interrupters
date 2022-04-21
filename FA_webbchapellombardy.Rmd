@@ -38,6 +38,14 @@ CRED_names <- data.frame(Order = c("1", "2", "3", "4"), FocusArea = c("Loop 12 a
                                                                       "Webb Chapel and Lombardy", 
                                                                       "Camp Wisdom and Gannon", 
                                                                       "Overton and Illinois"))
+
+shootingIncidents <- st_read("data/YAP Shooting Incidents.geojson")
+
+communityEvent <- st_read("data/YAP Community Events.geojson")
+
+bounds <- CRED_FA_WCL %>% 
+  st_bbox() %>% 
+  as.character()
 ```
 
 ```{r, Webb Chapel and Lombardy, echo = FALSE, message=FALSE, warning=FALSE, layout = "l-screen-inset shaded", fig.height=8}
@@ -47,14 +55,32 @@ leaflet() %>%
   addTiles(urlTemplate = cpal_mapbox, attribution = cpal_leaflet) %>%
   addPolygons(data = CRED_FA_WCL,
               color = "#525252",
-              weight = 1,
+              weight = 2,
               smoothFactor = 0.2, 
-              fillOpacity = 0.6,
-              fillColor = "#008097",
+              fillOpacity = 0.4,
+              fillColor = "#595959",
               group = "Focus Area"
               ) %>%
+  addCircleMarkers(data = shootingIncidents,
+                   stroke = FALSE,
+                   radius = 10,
+                   fillColor = "#008097",
+                   fillOpacity = 1,
+                   group = "Shooting Incidents",
+                   clusterOptions = markerClusterOptions()
+              ) %>%
+    addCircleMarkers(data = communityEvent,
+                   stroke = FALSE,
+                   radius = 10,
+                   fillColor = "#E98816",
+                   fillOpacity = 1,
+                   group = "Community Event",
+                   clusterOptions = markerClusterOptions()
+              ) %>%
+  fitBounds(bounds[1], bounds[2], bounds[3], bounds[4]) %>%
   addLayersControl(
-    overlayGroups = c("Focus Area"),
+    baseGroups = c("Focus Area"),
+    overlayGroups = c("Shooting Incidents", "Community Event"),
     position = "topright",
     options = layersControlOptions(collapsed = FALSE))
 ```
