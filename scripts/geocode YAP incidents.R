@@ -19,3 +19,5 @@ communityEvent <- import("data/YAP_Incidents.xlsx", which = "community event") %
 
 st_write(shootingIncidents, "data/YAP Shooting Incidents.geojson")
 st_write(communityEvent, "data/YAP Community Events.geojson")
+
+unique(shootingIncidents$neighborhood)

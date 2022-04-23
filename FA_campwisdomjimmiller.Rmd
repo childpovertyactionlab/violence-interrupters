@@ -54,7 +54,7 @@ bounds <- CRED_FA_CWG %>%
 leaflet() %>%
 #  setView(lng = -96.7970, lat = 32.7767, zoom = 10) %>%
   addTiles(urlTemplate = cpal_mapbox, attribution = cpal_leaflet) %>%
-  addPolygons(data = CRED_FA_CWG,
+  addPolygons(data = CRED_locations,
               color = "#525252",
               weight = 2,
               smoothFactor = 0.2, 
