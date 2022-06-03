@@ -7,42 +7,6 @@ output:
 ---
 
 ```{r Set-Up Block, include = FALSE}
-##### Load Libraries #####
-library(tidyverse)
-library(sf)
-library(leaflet)
-library(mapboxapi)
-library(htmltools)
-library(arcgisbinding)
-library(CPALtools)
-
-#### Load CRED Locations #####
-CRED_locations <- st_read(here::here("data/CRED_FocusAreas.geojson")) %>%
-  select(-Shape_Leng, -Shape_Area) %>%
-  st_zm() %>%
-  st_transform(crs = 4269)
-
-CRED_FA_LJM <- CRED_locations %>%
-  filter(NAME == "Loop12_JimMiller")
-
-CRED_FA_WCL <- CRED_locations %>%
-  filter(NAME == "WebbChapel_Lombardy")
-
-CRED_FA_CWG <- CRED_locations %>%
-  filter(NAME == "CampWisdom_Gannon")
-
-CRED_FA_OI <- CRED_locations %>%
-  filter(NAME == "Overton_Illinois")
-
-CRED_names <- data.frame(Order = c("1", "2", "3", "4"), FocusArea = c("Loop 12 and Jim Miller", 
-                                                                      "Webb Chapel and Lombardy", 
-                                                                      "Camp Wisdom and Gannon", 
-                                                                      "Overton and Illinois"))
-
-shootingIncidents <- st_read("data/YAP Shooting Incidents.geojson")
-
-communityEvent <- st_read("data/YAP Community Events.geojson")
-
 bounds <- CRED_FA_CWG %>% 
   st_bbox() %>% 
   as.character()
@@ -62,21 +26,21 @@ leaflet() %>%
               fillColor = "#595959",
               group = "Focus Area"
               ) %>%
-  addCircleMarkers(data = shootingIncidents,
+  addCircleMarkers(data = ViolentClean,
                    stroke = FALSE,
                    radius = 10,
                    fillColor = "#008097",
                    fillOpacity = 1,
                    group = "Shooting Incidents",
-                   clusterOptions = markerClusterOptions()
+                   clusterOptions = markerClusterOptions(maxClusterRadius = 0.01)
               ) %>%
-    addCircleMarkers(data = communityEvent,
+    addCircleMarkers(data = EventClean,
                    stroke = FALSE,
                    radius = 10,
                    fillColor = "#E98816",
                    fillOpacity = 1,
                    group = "Community Event",
-                   clusterOptions = markerClusterOptions()
+                   clusterOptions = markerClusterOptions(maxClusterRadius = 0.01)
               ) %>%
   fitBounds(bounds[1], bounds[2], bounds[3], bounds[4]) %>%
   addLayersControl(
